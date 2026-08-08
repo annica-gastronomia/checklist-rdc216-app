@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Annica — Protótipo integrado de telas</title>
+<style>
+:root{
+  --bg:#f5f6f4; --panel:#fff; --ink:#26322d; --muted:#6d7771;
+  --line:#dfe5e1; --brand:#365f4b; --brand2:#e8f0eb; --accent:#b67a35;
+  --danger:#a74747; --warn:#a66b20; --ok:#3f7656; --shadow:0 8px 25px rgba(30,45,38,.07);
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select,textarea{font:inherit} button{cursor:pointer}
+.app{display:grid;grid-template-columns:245px 1fr;min-height:100vh}
+aside{background:#21382e;color:#eef5f0;padding:22px 15px;position:sticky;top:0;height:100vh}
+.logo{font-size:25px;font-weight:800;letter-spacing:.4px;padding:5px 10px 24px}
+.logo small{display:block;font-size:11px;font-weight:500;opacity:.65;margin-top:4px}
+.nav{display:flex;flex-direction:column;gap:4px}.nav button{border:0;background:transparent;color:#dfe9e3;text-align:left;padding:11px 12px;border-radius:9px}
+.nav button:hover,.nav button.active{background:#355646;color:#fff}
+.nav .section{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;opacity:.5;margin:17px 12px 5px}
+main{padding:25px 30px 45px;max-width:1500px;width:100%;margin:auto}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+h1{font-size:25px;margin:0 0 5px}.subtitle{color:var(--muted);font-size:13px}
+.user{background:#fff;border:1px solid var(--line);border-radius:22px;padding:8px 13px;font-size:13px}
+.screen{display:none}.screen.active{display:block}
+.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 7px;font-size:16px}.card p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.metric{font-size:27px;font-weight:750;margin-top:8px}.label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 13px;border-radius:8px}.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}.btn.danger{color:#fff;background:var(--danger);border-color:var(--danger)}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.field label{display:block;font-size:12px;font-weight:650;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff}.field.full{grid-column:1/-1}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:11px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.badge{display:inline-block;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:700}.ok{background:#e5f1e9;color:var(--ok)}.warn{background:#f8edda;color:var(--warn)}.bad{background:#f6e2e2;color:var(--danger)}.info{background:#e8eef7;color:#466184}
+.progress{height:8px;background:#e7ece8;border-radius:8px;overflow:hidden}.progress span{display:block;height:100%;background:var(--brand)}
+.steps{display:flex;gap:5px;margin:0 0 18px}.step{flex:1;padding:9px;background:#e9eeeb;border-radius:7px;text-align:center;font-size:11px;color:#617068}.step.on{background:var(--brand);color:#fff}
+.question{border:1px solid var(--line);border-radius:10px;padding:15px;margin-bottom:10px}.question strong{display:block;margin-bottom:7px}.choices{display:flex;gap:7px;flex-wrap:wrap}.choice{padding:6px 10px;border:1px solid var(--line);border-radius:20px;font-size:12px}.choice.selected{background:#e8f0eb;border-color:#94ae9e;color:var(--brand);font-weight:700}
+.hero{padding:22px;border-radius:14px;background:linear-gradient(135deg,#e8f0eb,#f8f4ea);border:1px solid var(--line);margin-bottom:18px}.hero h2{margin:0 0 7px}.hero p{margin:0;color:#59645e}
+.kpi{display:flex;align-items:center;justify-content:space-between}.icon{width:35px;height:35px;border-radius:9px;background:var(--brand2);display:grid;place-items:center;color:var(--brand);font-weight:800}
+.list{display:flex;flex-direction:column;gap:8px}.row{display:flex;justify-content:space-between;gap:15px;padding:11px 0;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}
+.footer-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+@media(max-width:900px){.app{grid-template-columns:1fr}aside{position:static;height:auto}.nav{display:grid;grid-template-columns:repeat(3,1fr)}.nav .section{display:none}.g4,.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){main{padding:18px}.g2,.g3,.g4,.form{grid-template-columns:1fr}.nav{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="logo">annica<small>Gestão da Segurança dos Alimentos</small></div>
+  <div class="nav">
+    <div class="section">Visão geral</div>
+    <button class="active" data-screen="dashboard">Dashboard</button>
+    <button data-screen="unidade">Unidade</button>
+    <div class="section">Núcleo de produção</div>
+    <button data-screen="ficha">Ficha Técnica</button>
+    <button data-screen="custos">Custos</button>
+    <button data-screen="cmv">CMV</button>
+    <button data-screen="preco">Formação de Preço</button>
+    <button data-screen="nutri">Tabela Nutricional</button>
+    <button data-screen="rotulo">Rotulagem</button>
+    <div class="section">Segurança e conformidade</div>
+    <button data-screen="auditoria">Auditoria</button>
+    <button data-screen="checklist">Checklist de Auditoria</button>
+    <button data-screen="evidencias">Evidências</button>
+    <button data-screen="ncs">Não Conformidades</button>
+    <button data-screen="acoes">Ações Corretivas</button>
+    <button data-screen="documentos">Documentos</button>
+    <button data-screen="relatorio">Relatórios</button>
+  </div>
+</aside>
+
+<main>
+<div class="top"><div><h1 id="title">Dashboard</h1><div class="subtitle">Unidade: Restaurante Exemplo · São Paulo/SP</div></div><div class="user">● Administrador</div></div>
+
+<section id="dashboard" class="screen active">
+  <div class="hero"><h2>Visão integrada da operação</h2><p>Uma informação cadastrada uma vez pode alimentar produção, custos, conformidade, documentação e indicadores.</p></div>
+  <div class="grid g4">
+    <div class="card kpi"><div><div class="label">Receitas</div><div class="metric">42</div></div><div class="icon">FT</div></div>
+    <div class="card kpi"><div><div class="label">CMV médio</div><div class="metric">31,8%</div></div><div class="icon">%</div></div>
+    <div class="card kpi"><div><div class="label">Conformidade</div><div class="metric">87%</div></div><div class="icon">✓</div></div>
+    <div class="card kpi"><div><div class="label">NC abertas</div><div class="metric">7</div></div><div class="icon">!</div></div>
+  </div>
+  <br>
+  <div class="grid g2">
+    <div class="card"><h3>Núcleo Inteligente de Produção</h3><div class="list">
+      <div class="row"><span>Ficha Técnica</span><span class="badge ok">Completo</span></div>
+      <div class="row"><span>Custos</span><span class="badge ok">Atualizado</span></div>
+      <div class="row"><span>CMV</span><span class="badge info">42 receitas</span></div>
+      <div class="row"><span>Formação de preço</span><span class="badge warn">5 revisar</span></div>
+      <div class="row"><span>Informação nutricional</span><span class="badge info">38 prontas</span></div>
+      <div class="row"><span>Rotulagem</span><span class="badge warn">3 pendentes</span></div>
+    </div></div>
+    <div class="card"><h3>Segurança dos alimentos</h3><div class="list">
+      <div class="row"><span>Última auditoria</span><strong>05/08/2026</strong></div>
+      <div class="row"><span>Conformidade geral</span><strong>87%</strong></div>
+      <div class="row"><span>Não conformidades críticas</span><span class="badge bad">2</span></div>
+      <div class="row"><span>Ações vencidas</span><span class="badge warn">3</span></div>
+      <div class="row"><span>Evidências anexadas</span><strong>126</strong></div>
+    </div></div>
+  </div>
+</section>
+
+<section id="unidade" class="screen">
+<div class="toolbar"><button class="btn primary">+ Nova unidade</button><button class="btn">Editar cadastro</button></div>
+<div class="card"><h3>Cadastro inteligente da unidade</h3><p style="margin-bottom:15px">Dados estruturados para alimentar os demais processos da Annica.</p>
+<div class="form">
+<div class="field"><label>Nome da unidade</label><input value="Restaurante Exemplo"></div>
+<div class="field"><label>CNPJ</label><input value="00.000.000/0001-00"></div>
+<div class="field"><label>Tipo de estabelecimento</label><select><option>Restaurante</option><option>Padaria</option><option>Serviço de alimentação</option></select></div>
+<div class="field"><label>Responsável técnico</label><input value="Responsável Técnico"></div>
+<div class="field"><label>Endereço</label><input value="Rua Exemplo, 100"></div>
+<div class="field"><label>Município/UF</label><input value="São Paulo/SP"></div>
+<div class="field"><label>Perfil operacional</label><select><option>Produção própria + serviço</option><option>Produção própria</option></select></div>
+<div class="field"><label>Quantidade de funcionários</label><input value="18"></div>
+<div class="field full"><label>Processos realizados</label><textarea rows="3">Recebimento, armazenamento, pré-preparo, preparo, resfriamento, serviço e higienização.</textarea></div>
+</div><div class="footer-actions"><button class="btn">Cancelar</button><button class="btn primary">Salvar unidade</button></div></div>
+</section>
+
+<section id="ficha" class="screen">
+<div class="steps"><div class="step on">1. Receita</div><div class="step">2. Ingredientes</div><div class="step">3. Rendimento</div><div class="step">4. Revisão</div></div>
+<div class="card"><h3>Ficha Técnica · Quibe de forno</h3><div class="form">
+<div class="field"><label>Código</label><input value="REC-0042"></div><div class="field"><label>Rendimento</label><input value="12 porções"></div>
+<div class="field full"><label>Descrição</label><textarea rows="2">Preparação assada à base de trigo para quibe, carne e temperos.</textarea></div>
+</div><br>
+<table><thead><tr><th>Ingrediente</th><th>Quantidade</th><th>Unidade</th><th>FC</th><th>Custo</th></tr></thead><tbody>
+<tr><td>Trigo para quibe</td><td>500</td><td>g</td><td>1,00</td><td>R$ 6,20</td></tr>
+<tr><td>Carne moída</td><td>800</td><td>g</td><td>1,05</td><td>R$ 31,20</td></tr>
+<tr><td>Cebola</td><td>200</td><td>g</td><td>1,10</td><td>R$ 1,80</td></tr>
+<tr><td>Temperos</td><td>30</td><td>g</td><td>1,00</td><td>R$ 2,10</td></tr>
+</tbody></table><div class="footer-actions"><button class="btn">Adicionar ingrediente</button><button class="btn primary">Salvar ficha</button></div></div>
+</section>
+
+<section id="custos" class="screen">
+<div class="toolbar"><button class="btn primary">+ Nova ficha</button><button class="btn">Atualizar preços</button></div>
+<div class="grid g3"><div class="card"><div class="label">Custo direto</div><div class="metric">R$ 41,30</div></div><div class="card"><div class="label">Custo/porção</div><div class="metric">R$ 3,44</div></div><div class="card"><div class="label">Perdas estimadas</div><div class="metric">4,8%</div></div></div><br>
+<div class="card"><h3>Composição de custo</h3><table><thead><tr><th>Receita</th><th>Custo total</th><th>Rendimento</th><th>Custo/porção</th><th>Status</th></tr></thead><tbody>
+<tr><td>Quibe de forno</td><td>R$ 41,30</td><td>12</td><td>R$ 3,44</td><td><span class="badge ok">Atualizado</span></td></tr>
+<tr><td>Homus</td><td>R$ 18,90</td><td>10</td><td>R$ 1,89</td><td><span class="badge ok">Atualizado</span></td></tr>
+<tr><td>Babaganush</td><td>R$ 22,40</td><td>8</td><td>R$ 2,80</td><td><span class="badge warn">Revisar preço</span></td></tr>
+</tbody></table></div>
+</section>
+
+<section id="cmv" class="screen">
+<div class="grid g4"><div class="card"><div class="label">CMV atual</div><div class="metric">31,8%</div></div><div class="card"><div class="label">Meta</div><div class="metric">≤ 35%</div></div><div class="card"><div class="label">Receita média</div><div class="metric">R$ 68,00</div></div><div class="card"><div class="label">Margem bruta</div><div class="metric">68,2%</div></div></div><br>
+<div class="card"><h3>CMV por preparação</h3><table><thead><tr><th>Preparação</th><th>Custo</th><th>Preço</th><th>CMV</th><th>Indicador</th></tr></thead><tbody>
+<tr><td>Quibe de forno</td><td>R$ 3,44</td><td>R$ 18,00</td><td>19,1%</td><td><span class="badge ok">≤20%</span></td></tr>
+<tr><td>Homus</td><td>R$ 1,89</td><td>R$ 12,00</td><td>15,8%</td><td><span class="badge ok">≤20%</span></td></tr>
+<tr><td>Prato executivo</td><td>R$ 12,40</td><td>R$ 28,00</td><td>44,3%</td><td><span class="badge warn">Revisar</span></td></tr>
+</tbody></table></div>
+</section>
+
+<section id="preco" class="screen">
+<div class="card"><h3>Formação de preço · Quibe de forno</h3><div class="form">
+<div class="field"><label>Custo por porção</label><input value="R$ 3,44"></div><div class="field"><label>CMV alvo</label><input value="20%"></div>
+<div class="field"><label>Preço calculado</label><input value="R$ 17,20"></div><div class="field"><label>Preço praticado</label><input value="R$ 18,00"></div>
+<div class="field"><label>Margem bruta</label><input value="80,9%"></div><div class="field"><label>Arredondamento</label><select><option>Preço comercial</option></select></div>
+</div><div class="footer-actions"><button class="btn primary">Aplicar preço</button></div></div>
+</section>
+
+<section id="nutri" class="screen">
+<div class="toolbar"><button class="btn primary">+ Gerar informação nutricional</button></div>
+<div class="card"><h3>Informação nutricional · Quibe de forno</h3><p style="margin-bottom:15px">Valores calculados a partir dos ingredientes e do rendimento da ficha técnica.</p>
+<table><thead><tr><th>Nutriente</th><th>Por porção</th><th>%VD*</th></tr></thead><tbody>
+<tr><td>Energia</td><td>238 kcal</td><td>12%</td></tr><tr><td>Carboidratos</td><td>19,2 g</td><td>6%</td></tr><tr><td>Proteínas</td><td>18,4 g</td><td>37%</td></tr><tr><td>Gorduras totais</td><td>9,8 g</td><td>18%</td></tr><tr><td>Gorduras saturadas</td><td>3,2 g</td><td>16%</td></tr><tr><td>Fibra alimentar</td><td>2,7 g</td><td>11%</td></tr><tr><td>Sódio</td><td>410 mg</td><td>21%</td></tr>
+</tbody></table><p style="margin-top:12px;font-size:11px;color:var(--muted)">*Exemplo visual de cálculo. Os valores reais dependem da base de alimentos e da ficha técnica.</p></div>
+</section>
+
+<section id="rotulo" class="screen">
+<div class="grid g2">
+<div class="card"><h3>Configuração do rótulo</h3><div class="form">
+<div class="field"><label>Nome do produto</label><input value="Quibe de forno"></div><div class="field"><label>Porção</label><input value="100 g"></div>
+<div class="field"><label>Conservação</label><input value="Refrigerado"></div><div class="field"><label>Validade</label><input value="3 dias"></div>
+<div class="field full"><label>Ingredientes</label><textarea rows="3">Trigo para quibe, carne bovina, cebola, temperos.</textarea></div>
+</div><div class="footer-actions"><button class="btn primary">Gerar rótulo</button></div></div>
+<div class="card"><h3>Pré-visualização</h3><div style="border:2px solid #222;padding:16px;background:#fff"><strong style="font-size:18px">QUIBE DE FORNO</strong><hr><strong>INFORMAÇÃO NUTRICIONAL</strong><br><small>Porção 100 g</small><hr><div class="row"><span>Valor energético</span><b>238 kcal</b></div><div class="row"><span>Carboidratos</span><b>19,2 g</b></div><div class="row"><span>Proteínas</span><b>18,4 g</b></div><div class="row"><span>Gorduras totais</span><b>9,8 g</b></div><div class="row"><span>Sódio</span><b>410 mg</b></div></div></div>
+</div></section>
+
+<section id="auditoria" class="screen">
+<div class="steps"><div class="step on">Cadastro</div><div class="step on">Módulos</div><div class="step">Respostas</div><div class="step">Evidências</div><div class="step">NC</div><div class="step">Ações</div><div class="step">Relatório</div></div>
+<div class="card"><h3>Auditoria sanitária · Visita 08/2026</h3><div class="grid g3" style="margin-top:14px"><div><div class="label">Progresso</div><strong>68 / 82 itens</strong><div class="progress" style="margin-top:7px"><span style="width:83%"></span></div></div><div><div class="label">Conformes</div><strong>56</strong></div><div><div class="label">Não conformes</div><strong>12</strong></div></div><br>
+<table><thead><tr><th>Módulo</th><th>Itens</th><th>Conformes</th><th>NC</th><th>Status</th></tr></thead><tbody>
+<tr><td>Edificação e instalações</td><td>14</td><td>13</td><td>1</td><td><span class="badge ok">Concluído</span></td></tr>
+<tr><td>Higienização</td><td>12</td><td>10</td><td>2</td><td><span class="badge warn">Revisar</span></td></tr>
+<tr><td>Manipuladores</td><td>11</td><td>9</td><td>2</td><td><span class="badge warn">Revisar</span></td></tr>
+<tr><td>Matérias-primas</td><td>15</td><td>12</td><td>3</td><td><span class="badge warn">Revisar</span></td></tr>
+<tr><td>Processos</td><td>18</td><td>12</td><td>6</td><td><span class="badge bad">Atenção</span></td></tr>
+<tr><td>Documentação</td><td>12</td><td>10</td><td>2</td><td><span class="badge warn">Revisar</span></td></tr>
+</tbody></table></div>
+</section>
+
+
+<section id="checklist" class="screen">
+<div class="steps">
+  <div class="step on">1. Unidade</div><div class="step on">2. Checklist</div>
+  <div class="step">3. Evidências</div><div class="step">4. NC</div>
+  <div class="step">5. Ações</div><div class="step">6. Relatório</div>
+</div>
+
+<div class="toolbar">
+  <button class="btn primary">Salvar progresso</button>
+  <button class="btn">Filtrar pendentes</button>
+  <button class="btn">Mostrar todos</button>
+</div>
+
+<div class="grid g4">
+  <div class="card"><div class="label">Itens</div><div class="metric">82</div></div>
+  <div class="card"><div class="label">Respondidos</div><div class="metric">68</div></div>
+  <div class="card"><div class="label">Conformes</div><div class="metric">56</div></div>
+  <div class="card"><div class="label">NC</div><div class="metric">12</div></div>
+</div>
+<br>
+
+<div class="card">
+  <h3>Checklist sanitário · Auditoria 05/08/2026</h3>
+  <p style="margin-bottom:15px">
+    Cada item pode gerar conformidade, não conformidade, observação, evidência e ação corretiva.
+  </p>
+
+  <div class="question">
+    <strong>1. As instalações, equipamentos, móveis e utensílios estão em adequado estado de conservação?</strong>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">
+      Referência: RDC 216/2004 · Edificação e instalações
+    </div>
+    <div class="choices">
+      <span class="choice selected">✓ Conforme</span>
+      <span class="choice">✕ Não conforme</span>
+      <span class="choice">N/A</span>
+      <span class="choice">Observação</span>
+      <span class="choice">📎 Evidência</span>
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>2. A higienização das instalações, equipamentos, móveis e utensílios é realizada de forma adequada?</strong>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">
+      Referência: RDC 216/2004 · Higienização
+    </div>
+    <div class="choices">
+      <span class="choice">✓ Conforme</span>
+      <span class="choice selected">✕ Não conforme</span>
+      <span class="choice">N/A</span>
+      <span class="choice">Observação</span>
+      <span class="choice">📎 Evidência</span>
+    </div>
+    <div style="margin-top:10px">
+      <div class="field"><label>Observação / descrição da NC</label>
+      <textarea rows="2" placeholder="Descreva objetivamente o achado...">Frequência registrada abaixo do procedimento definido no POP.</textarea></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>3. Os manipuladores mantêm hábitos de higiene e conduta adequados durante a manipulação?</strong>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">
+      Referência: RDC 216/2004 · Manipuladores
+    </div>
+    <div class="choices">
+      <span class="choice selected">✓ Conforme</span>
+      <span class="choice">✕ Não conforme</span>
+      <span class="choice">N/A</span>
+      <span class="choice">Observação</span>
+      <span class="choice">📎 Evidência</span>
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>4. As temperaturas dos equipamentos de conservação são monitoradas e registradas?</strong>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">
+      Referência: Procedimento interno · Monitoramento de temperaturas
+    </div>
+    <div class="choices">
+      <span class="choice">✓ Conforme</span>
+      <span class="choice selected">✕ Não conforme</span>
+      <span class="choice">N/A</span>
+      <span class="choice">Observação</span>
+      <span class="choice selected">📎 Evidência</span>
+    </div>
+    <div style="margin-top:10px;padding:10px;background:#f7f9f7;border-radius:8px;font-size:12px">
+      Evidência vinculada: <strong>termômetro_câmara.jpg</strong> · 05/08/2026
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>5. Os documentos e registros obrigatórios estão disponíveis, atualizados e controlados?</strong>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">
+      Referência: RDC 216/2004 · Documentação e registros
+    </div>
+    <div class="choices">
+      <span class="choice">✓ Conforme</span>
+      <span class="choice">✕ Não conforme</span>
+      <span class="choice">N/A</span>
+      <span class="choice selected">Observação</span>
+      <span class="choice">📎 Evidência</span>
+    </div>
+  </div>
+
+  <div class="footer-actions">
+    <button class="btn">← Item anterior</button>
+    <button class="btn primary">Próximo item →</button>
+    <button class="btn primary">Finalizar checklist</button>
+  </div>
+</div>
+</section>
+
+<section id="evidencias" class="screen">
+<div class="toolbar"><button class="btn primary">+ Adicionar evidência</button><button class="btn">Filtrar por módulo</button></div>
+<div class="card"><h3>Evidências da auditoria</h3><table><thead><tr><th>Arquivo</th><th>Item</th><th>Tipo</th><th>Data</th><th>Vínculo</th></tr></thead><tbody>
+<tr><td>termômetro_câmara.jpg</td><td>PROC-07</td><td>Foto</td><td>05/08/2026</td><td>Temperatura</td></tr>
+<tr><td>planilha_temperatura.pdf</td><td>PROC-09</td><td>Documento</td><td>05/08/2026</td><td>Monitoramento</td></tr>
+<tr><td>limpeza_exaustão.jpg</td><td>HIG-04</td><td>Foto</td><td>05/08/2026</td><td>Higienização</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="ncs" class="screen">
+<div class="grid g3"><div class="card"><div class="label">Abertas</div><div class="metric">7</div></div><div class="card"><div class="label">Críticas</div><div class="metric">2</div></div><div class="card"><div class="label">Vencidas</div><div class="metric">3</div></div></div><br>
+<div class="card"><h3>Não conformidades</h3><table><thead><tr><th>NC</th><th>Requisito</th><th>Causa</th><th>Prioridade</th><th>Status</th></tr></thead><tbody>
+<tr><td>NC-024</td><td>PROC-07</td><td>Monitoramento incompleto</td><td><span class="badge bad">Crítica</span></td><td>Aberta</td></tr>
+<tr><td>NC-025</td><td>HIG-04</td><td>Frequência inadequada</td><td><span class="badge warn">Alta</span></td><td>Em ação</td></tr>
+<tr><td>NC-026</td><td>DOC-03</td><td>Documento desatualizado</td><td><span class="badge info">Média</span></td><td>Aberta</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="acoes" class="screen">
+<div class="toolbar"><button class="btn primary">+ Nova ação corretiva</button></div>
+<div class="card"><h3>Plano de ações</h3><table><thead><tr><th>Ação</th><th>NC</th><th>Responsável</th><th>Prazo</th><th>Status</th></tr></thead><tbody>
+<tr><td>Implantar registro de temperatura</td><td>NC-024</td><td>Gerente</td><td>12/08/2026</td><td><span class="badge warn">Em andamento</span></td></tr>
+<tr><td>Revisar POP de higienização</td><td>NC-025</td><td>RT</td><td>10/08/2026</td><td><span class="badge ok">Concluída</span></td></tr>
+<tr><td>Atualizar manual</td><td>NC-026</td><td>RT</td><td>20/08/2026</td><td><span class="badge info">Planejada</span></td></tr>
+</tbody></table></div>
+</section>
+
+<section id="documentos" class="screen">
+<div class="toolbar"><button class="btn primary">+ Novo documento</button><button class="btn">Importar arquivo</button></div>
+<div class="grid g3">
+<div class="card"><h3>Manual de Boas Práticas</h3><p>Versão 3.2 · Atualizado em 01/08/2026</p><br><span class="badge ok">Vigente</span></div>
+<div class="card"><h3>POP — Higienização</h3><p>Versão 4.0 · Atualizado em 05/08/2026</p><br><span class="badge ok">Vigente</span></div>
+<div class="card"><h3>APPCC</h3><p>Estrutura futura · ainda não implantado</p><br><span class="badge info">Planejado</span></div>
+</div></section>
+
+<section id="relatorio" class="screen">
+<div class="toolbar"><button class="btn primary">Gerar relatório</button><button class="btn">Exportar PDF</button></div>
+<div class="card"><h3>Relatório de auditoria · 05/08/2026</h3><div class="grid g4" style="margin:15px 0"><div><div class="label">Conformidade</div><div class="metric">87%</div></div><div><div class="label">Itens avaliados</div><div class="metric">82</div></div><div><div class="label">NC</div><div class="metric">12</div></div><div><div class="label">Críticas</div><div class="metric">2</div></div></div>
+<h3>Resumo executivo</h3><p style="color:var(--muted);line-height:1.6">A unidade apresenta nível geral de conformidade satisfatório, com pontos de atenção concentrados em processos, monitoramentos e documentação. As não conformidades devem ser tratadas conforme prioridade e prazo definidos.</p><br>
+<h3>Principais achados</h3><div class="list"><div class="row"><span>Monitoramento de temperaturas</span><span class="badge bad">Crítico</span></div><div class="row"><span>Frequência de higienização</span><span class="badge warn">Alto</span></div><div class="row"><span>Atualização documental</span><span class="badge info">Médio</span></div></div>
+</div></section>
+
+</main></div>
+<script>
+const titles={
+ dashboard:"Dashboard",unidade:"Unidade",ficha:"Ficha Técnica",custos:"Custos",cmv:"CMV",
+ preco:"Formação de Preço",nutri:"Tabela Nutricional",rotulo:"Rotulagem",auditoria:"Auditoria",checklist:"Checklist de Auditoria",
+ evidencias:"Evidências",ncs:"Não Conformidades",acoes:"Ações Corretivas",documentos:"Documentos",relatorio:"Relatórios"
+};
+document.querySelectorAll(".nav button").forEach(b=>{
+ b.addEventListener("click",()=>{
+   document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+   document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+   b.classList.add("active");
+   const id=b.dataset.screen;
+   document.getElementById(id).classList.add("active");
+   document.getElementById("title").textContent=titles[id];
+   window.scrollTo({top:0,behavior:"smooth"});
+ });
+});
+</script>
+</body>
+</html>
