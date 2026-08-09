@@ -201,7 +201,8 @@ document.getElementById('sendCodeBtn').addEventListener('click',async()=>{const 
 document.getElementById('confirmCodeBtn').addEventListener('click',async()=>{const email=document.getElementById('loginEmail').value.trim();const code=document.getElementById('loginCode').value.trim();const msg2=document.getElementById('loginMsg2');if(!code){msg2.textContent='Digite o código recebido.';return;}msg2.textContent='Confirmando...';try{await confirmLoginCode(email,code);hideLoginScreen();render();showHome();startCloudSync();}catch(err){msg2.textContent=err.message;}});
 document.getElementById('backToEmailBtn').addEventListener('click',()=>{document.getElementById('loginStep2').classList.add('is-hidden');document.getElementById('loginStep1').classList.remove('is-hidden');});
 document.getElementById('logoutBtn').addEventListener('click',logout);
-async function boot(){if(accessToken){await loadAccountId();hideLoginScreen();render();showHome();startCloudSync();}else if(refreshToken){const ok=await refreshSession();if(ok){await loadAccountId();hideLoginScreen();render();showHome();startCloudSync();}else{showLoginScreen();}}else{showLoginScreen();}}
+function startTokenRefreshTimer(){window.setInterval(refreshSession,45*60*1000);}
+async function boot(){if(refreshToken){const ok=await refreshSession();if(ok){await loadAccountId();hideLoginScreen();render();showHome();startCloudSync();startTokenRefreshTimer();return;}}if(accessToken){await loadAccountId();hideLoginScreen();render();showHome();startCloudSync();startTokenRefreshTimer();return;}showLoginScreen();}
 boot();
 })();
 </script>
