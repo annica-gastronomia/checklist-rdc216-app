@@ -43,7 +43,6 @@ const mapsLink=document.getElementById('mapsLink');
 const whatsappLink1=document.getElementById('whatsappLink1');
 const whatsappLink2=document.getElementById('whatsappLink2');
 const saveLocalBtn=document.getElementById('saveLocalBtn');
-const saveLocalBackBtn=document.getElementById('saveLocalBackBtn');
 const cancelLocalBtn=document.getElementById('cancelLocalBtn');
 const modal=document.getElementById('confirmModal');
 const toast=document.getElementById('toast');
