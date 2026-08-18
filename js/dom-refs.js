@@ -74,6 +74,7 @@ const medicoesBackBtn=document.getElementById('medicoesBackBtn');
 const fontesPage=document.getElementById('fontesPage');
 const fontesBtn=document.getElementById('fontesBtn');
 const fontesBackBtn=document.getElementById('fontesBackBtn');
+const fontesBackToChecklistBtn=document.getElementById('fontesBackToChecklistBtn');
 const actionPlanPrintModal=document.getElementById('actionPlanPrintModal');
 const medicoesReadingDetailModal=document.getElementById('medicoesReadingDetailModal');
 const appccBtn=document.getElementById('appccBtn');
