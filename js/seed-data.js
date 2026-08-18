@@ -24,5 +24,5 @@ const ANNICA_ICON_SVG='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080
 const BUFFET_ITEM_IDS=['8-22','10-1','10-2','10-3','10-4','10-5','10-6','10-7'];
 const MEAT_ITEM_IDS=['13-1','13-2','13-3','13-4','13-5','6-11'];
 const SUSHI_ITEM_IDS=['8-23','8-24'];
-const CRUS_ITEM_IDS=['8-25'];
+const CRUS_ITEM_IDS=['8-25','8-28'];
 const DELIVERY_ITEM_IDS=['9-4','9-5'];
