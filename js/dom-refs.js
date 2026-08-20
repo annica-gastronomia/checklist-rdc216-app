@@ -64,6 +64,7 @@ const mbpContentEl=document.getElementById('mbpContent');
 const mbpBtn=document.getElementById('mbpBtn');
 const mbpSaveBtn=document.getElementById('mbpSaveBtn');
 const mbpPdfBtn=document.getElementById('mbpPdfBtn');
+const mbpWordBtn=document.getElementById('mbpWordBtn');
 const mbpBackBtn=document.getElementById('mbpBackBtn');
 const actionPlanPage=document.getElementById('actionPlanPage');
 const actionPlanContentEl=document.getElementById('actionPlanContent');
