@@ -421,7 +421,7 @@ appccField(a,'tipoPerigo','Tipo de perigo','select',APPCC_HAZARD_TYPES,'Biológi
 appccField(a,'pcc','PC ou PCC?','select',APPCC_PCC_OPTIONS,pccHelp)+
 appccField(a,'perigo','Perigo identificado','textarea',null,'Sugestão pré-preenchida de acordo com o tipo de perigo escolhido acima — edite à vontade pro seu caso específico.',true)+
 appccField(a,'controle','Medida de controle','textarea',null,'Sugestão pré-preenchida de acordo com o tipo de perigo escolhido acima — edite à vontade pro seu caso específico.',true)+
-appccField(a,'limite','Limite crítico','text',null,'Critério objetivo que separa aceitável de não aceitável. Ex.: cocção acima de 75°C.')+
+appccField(a,'limite','Limite crítico','text',null,appccSuggestLimiteHint(etapaLabel))+
 appccField(a,'monitoramento','Monitoramento','text',null,'Como será verificado. Ex.: medir com termômetro calibrado, conferir tempo, verificar registro.')+
 appccField(a,'frequencia','Frequência','text',null,'Ex.: a cada lote, diariamente, a cada recebimento.')+
 appccField(a,'responsavel','Responsável','text',null,'Cargo ou pessoa que executa ou confere o controle.')+
@@ -434,7 +434,7 @@ function appccSalvarAnalise(analiseId){const card=document.querySelector('[data-
 function appccCancelarAnalise(){renderAppcc();}
 function appccCriarProcesso(){const input=document.getElementById('appccNovoProcessoNome');const nome=(input.value||'').trim();if(!nome){showToast('Digite o nome do processo.');return;}state.appcc.processos.push({id:genId('processo'),nome,tipo:'restaurante',ramos:[{id:genId('ramo'),nome:'Principal',fluxo:[]}],analises:[]});persist();input.value='';renderAppcc();showToast('Processo criado.');}
 function appccExcluirProcesso(id){const p=appccFindProcesso(id);if(!p)return;if(!window.confirm('Excluir o processo "'+p.nome+'"? Essa ação não pode ser desfeita.'))return;state.appcc.processos=state.appcc.processos.filter(row=>row.id!==id);if(appccOpenProcessoId===id)appccOpenProcessoId='';persist();renderAppcc();showToast('Processo excluído.');}
-function appccAdicionarEtapa(processoId,ramoId){const p=appccFindProcesso(processoId);if(!p)return;const ramo=p.ramos.find(row=>row.id===ramoId);if(!ramo)return;const textEl=document.getElementById('appcc-flow-step-'+cssSafe(ramoId));const texto=((textEl&&textEl.value)||'').trim();if(!texto){showToast('Digite o texto da etapa.');return;}ramo.fluxo.push({id:genId('etapa'),texto,forma:'process'});persist();renderAppcc();showToast('Etapa adicionada.');}
+function appccAdicionarEtapa(processoId,ramoId){const p=appccFindProcesso(processoId);if(!p)return;const ramo=p.ramos.find(row=>row.id===ramoId);if(!ramo)return;const textEl=document.getElementById('appcc-flow-step-'+cssSafe(ramoId));const texto=((textEl&&textEl.value)||'').trim();if(!texto){showToast('Digite o texto da etapa.');return;}ramo.fluxo.unshift({id:genId('etapa'),texto,forma:'process'});persist();renderAppcc();showToast('Etapa adicionada.');}
 function appccRenomearEtapa(etapaId,novoTexto){const p=appccFindProcesso(appccOpenProcessoId);if(!p)return;for(const ramo of p.ramos){const item=ramo.fluxo.find(row=>row.id===etapaId);if(item){item.texto=novoTexto;persist();return;}}}
 function appccSalvarEtapaTexto(etapaId){const input=document.getElementById('appcc-etapa-texto-'+cssSafe(etapaId));if(!input)return;const texto=(input.value||'').trim();if(!texto){showToast('Digite o texto da etapa.');return;}appccRenomearEtapa(etapaId,texto);renderAppcc();showToast('Etapa salva.');}
 function appccCancelarEtapaTexto(){renderAppcc();}
