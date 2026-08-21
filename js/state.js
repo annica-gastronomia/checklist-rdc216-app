@@ -42,6 +42,8 @@ const APPCC_ETAPA_HAZARD_OVERRIDES=[
 {match:norm=>norm.includes('recebiment')&&/hortifruti|verdura|legume|\bfruta|hortalic/.test(norm),tipoPerigo:'Biológico',perigo:'Recebimento de hortifrutícolas fora das condições de temperatura (4 a 10°C quando refrigerados, conforme Art. 30 da Portaria CVS 3/2026), fora do prazo de validade ou das condições higiênico-sanitárias, favorecendo contaminação por microrganismos patogênicos.',controle:'Conferir e registrar a temperatura (quando refrigerado), integridade, validade e aspecto sensorial (ausência de deterioração/sujidade) no recebimento, conforme Art. 30 da Portaria CVS 3/2026; recusar o lote se algum critério não for atendido.'},
 {keywords:['recebiment'],tipoPerigo:'Biológico',perigo:'Recebimento de matéria-prima fora da temperatura, do prazo de validade ou das condições higiênico-sanitárias exigidas, permitindo a entrada de microrganismos patogênicos no estabelecimento.',controle:'Conferir temperatura, validade, integridade da embalagem e procedência do fornecedor no ato do recebimento, conforme a Portaria CVS 3/2026; recusar o lote se algum critério não for atendido.'},
 {keywords:['armazen','estoc'],tipoPerigo:'Biológico',perigo:'Multiplicação de microrganismos por armazenamento fora da temperatura adequada, tempo de guarda excessivo ou contaminação cruzada com outros alimentos.',controle:'Controle de temperatura do equipamento de refrigeração/congelamento, identificação com data de validade, separação entre crus e prontos, organização por ordem de validade (PVPS).'},
+{keywords:['congela'],tipoPerigo:'Biológico',perigo:'Sobrevivência de parasitas (ex.: Anisakis, Diphyllobothrium latum) em pescado destinado a consumo cru ou mal cozido (sushi, sashimi, ceviche), por congelamento em tempo/temperatura insuficientes.',controle:'Congelar o pescado a -20°C por 7 dias corridos ou -35°C por 15 horas, conforme RIISPOA (Decreto federal 9.013/2017, Art. 216, §1º), registrando temperatura e tempo do processo; exigir comprovação do fornecedor quando o congelamento for feito por ele.'},
+{match:norm=>norm.includes('limpeza')&&/peixe|pescad|sashimi|sushi|frutos do mar|marisco|camarao|salmao|atum/.test(norm),tipoPerigo:'Biológico',perigo:'Aumento da carga microbiana naturalmente presente no pescado cru (ex.: coliformes, Salmonella spp., Vibrio spp.) durante a limpeza e o corte, pelo tempo de manipulação fora da refrigeração.',controle:'Trabalhar em lotes pequenos, com tempo limitado de manipulação fora da refrigeração, mantendo o restante do lote refrigerado; higienização de mãos, utensílios e superfícies antes e depois.'},
 {keywords:['cocção','cozin','assar','fritar','grelh','forno'],tipoPerigo:'Biológico',perigo:'Sobrevivência de microrganismos patogênicos por tempo/temperatura de cocção insuficientes.',controle:'Cocção até atingir a temperatura mínima exigida no centro geométrico do alimento (conforme Portaria CVS 3/2026), verificada com termômetro calibrado a cada lote.'},
 {keywords:['resfri'],tipoPerigo:'Biológico',perigo:'Multiplicação de microrganismos durante o resfriamento lento do alimento após a cocção, na faixa de temperatura de risco.',controle:'Resfriar de 60°C a 10°C em no máximo 2 horas, depois manter sob refrigeração (menos de 5°C) ou congelamento (-18°C ou menos), conforme Portaria CVS 3/2026, art. 67.'},
 {keywords:['prepar','tempero','manipul','montag'],tipoPerigo:'Biológico',perigo:'Contaminação cruzada durante o preparo por manipulação inadequada, utensílios não higienizados ou contato entre alimentos crus e prontos.',controle:'Higienização de mãos e utensílios entre etapas, segregação de utensílios/áreas para crus e prontos, boas práticas de manipulação.'},
@@ -56,6 +58,8 @@ const APPCC_LIMITE_HINTS=[
 {match:norm=>norm.includes('recebiment')&&/hortifruti|verdura|legume|\bfruta|hortalic/.test(norm),texto:'Critério objetivo que separa aceitável de não aceitável. Ex.: hortifruti refrigerado entre 4°C e 10°C no recebimento (Art. 30 da Portaria CVS 3/2026).'},
 {match:norm=>norm.includes('recebiment'),texto:'Critério objetivo que separa aceitável de não aceitável. Ex.: temperatura e validade dentro do exigido pelo Art. 30 da Portaria CVS 3/2026 para o tipo de produto recebido.'},
 {match:norm=>/armazen|estoc/.test(norm),texto:'Critério objetivo que separa aceitável de não aceitável. Ex.: refrigerado abaixo de 5°C ou congelado a -18°C ou menos.'},
+{match:norm=>norm.includes('congela'),texto:'Critério objetivo que separa aceitável de não aceitável. Ex.: -20°C por 7 dias corridos ou -35°C por 15 horas (RIISPOA, Decreto 9.013/2017, Art. 216, §1º).'},
+{match:norm=>norm.includes('limpeza')&&/peixe|pescad|sashimi|sushi|frutos do mar|marisco|camarao|salmao|atum/.test(norm),texto:'Critério objetivo que separa aceitável de não aceitável. Ex.: no máximo 30 minutos de manipulação por lote fora da refrigeração.'},
 {match:norm=>/cocção|coccao|cozin|assar|fritar|grelh|forno/.test(norm),texto:'Critério objetivo que separa aceitável de não aceitável. Ex.: cocção acima de 75°C no centro geométrico do alimento.'},
 {match:norm=>/resfri/.test(norm),texto:'Critério objetivo que separa aceitável de não aceitável. Ex.: de 60°C a 10°C em no máximo 2 horas.'},
 {match:norm=>/transport|entrega|deliver|distribu/.test(norm),texto:'Critério objetivo que separa aceitável de não aceitável. Ex.: manter a temperatura exigida para o tipo de alimento durante todo o transporte.'},
@@ -66,11 +70,21 @@ const APPCC_PCC_HINT_KEYWORDS=['temperatura','°c','graus','cocção','coccao','
 function appccSuggestPccHint(etapaTexto,perigo,limite){const norm=appccNormalizeText((etapaTexto||'')+' '+(perigo||'')+' '+(limite||''));const isPcc=APPCC_PCC_HINT_KEYWORDS.some(k=>norm.includes(k));return isPcc?'PCC':'PC';}
 const APPCC_PCC_OPTIONS=['PC','PCC','Não se aplica'];
 const APPCC_STATUS_OPTIONS=['Em análise','Controlado','Requer ação'];
-// Modelos de etapas sugeridas por perfil do estabelecimento. Começa vazio de propósito —
-// o conteúdo (quais etapas fazem sentido pra cada cenário) é escrito pelo usuário quando
-// tiver tempo, não inventado aqui. Pra adicionar um modelo, inclua um objeto assim:
-// {id:'sushi-basico', label:'Sushi/peixe cru', matches:est=>est.preparaSushi==='sim'||est.servePratoCru==='sim', etapas:['Recebimento do pescado','Congelamento antiparasitário','Preparo','Montagem','Exposição']}
-const APPCC_FLOW_TEMPLATES=[];
+// Modelos de etapas sugeridas por perfil do estabelecimento. Pra adicionar um modelo novo,
+// inclua um objeto: {id, label, matches:est=>boolean, etapas:['texto etapa 1', ...]}
+const APPCC_FLOW_TEMPLATES=[
+{id:'sushi-peixe-cru',label:'Sushi / peixe cru (inclui ceviche)',matches:est=>est.preparaSushi==='sim'||est.servePratoCru==='sim',etapas:[
+'Recebimento do pescado',
+'Armazenamento sob refrigeração',
+'Congelamento antiparasitário',
+'Descongelamento controlado',
+'Limpeza e corte do pescado',
+'Higienização dos vegetais e acompanhamentos',
+'Preparo e mistura dos ingredientes',
+'Refrigeração e porcionamento',
+'Serviço'
+]}
+];
 function normalizeAppccFluxoItem(it){return {id:it.id||genId('etapa'),texto:it.texto||'',forma:APPCC_FLOW_SHAPES.includes(it.forma)?it.forma:'process'};}
 function normalizeAppccAnalise(a){return {id:a.id||genId('analise'),etapaId:a.etapaId||'',tipoPerigo:APPCC_HAZARD_TYPES.includes(a.tipoPerigo)?a.tipoPerigo:'Biológico',perigo:a.perigo||'',controle:a.controle||'',pcc:APPCC_PCC_OPTIONS.includes(a.pcc)?a.pcc:'PC',limite:a.limite||'',monitoramento:a.monitoramento||'',frequencia:a.frequencia||'',responsavel:a.responsavel||'',status:APPCC_STATUS_OPTIONS.includes(a.status)?a.status:'Em análise',acaoCorretiva:a.acaoCorretiva||'',registro:a.registro||''};}
 function normalizeAppccRamo(r){return {id:r.id||genId('ramo'),nome:r.nome||'',fluxo:Array.isArray(r.fluxo)?r.fluxo.map(normalizeAppccFluxoItem):[]};}
