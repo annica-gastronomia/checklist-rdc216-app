@@ -102,7 +102,7 @@ function documentacaoPrazoBadge(validade){if(!validade)return '<span class="prio
 function documentacaoRegistroStatus(r){const dateStatus=documentacaoPrazoStatus(r.validade);if(dateStatus==='vencido')return 'vencido';if(dateStatus==='a-vencer')return 'a-vencer';if(!r.arquivo)return 'sem-arquivo';return dateStatus;}
 function documentacaoRegistroStatusRank(r){return {vencido:4,'a-vencer':3,'sem-arquivo':2,'sem-validade':1,'no-prazo':0}[documentacaoRegistroStatus(r)]||0;}
 function documentacaoRegistroBadge(r){if(documentacaoRegistroStatus(r)==='sem-arquivo')return '<span class="priority-badge status-warn">Sem arquivo anexado</span>';return documentacaoPrazoBadge(r.validade);}
-function documentacaoRegistroDestaque(r){const status=documentacaoRegistroStatus(r);return (status==='a-vencer'||status==='sem-arquivo')?' is-atencao':'';}
+function documentacaoRegistroDestaque(r){return r.arquivo?'':' is-atencao';}
 function documentacaoPiorRegistro(item){if(!item.historico||!item.historico.length)return null;return item.historico.reduce((pior,r)=>!pior||documentacaoRegistroStatusRank(r)>documentacaoRegistroStatusRank(pior)?r:pior,null);}
 function storageKey(){return STORAGE_KEY_BASE+'-'+activeProfileId;}
 function cloudUpdatedKey(){return CLOUD_UPDATED_KEY_BASE+'-'+activeProfileId;}
